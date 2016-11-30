@@ -1,8 +1,11 @@
+import fcntl
 import os
 import re
+import time
+
 from subprocess import Popen, PIPE, STDOUT
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 PPPD_RETURNCODES = {
     1:  'Fatal error occured',
@@ -64,9 +67,19 @@ class PPPConnection:
         commands.append('nodetach')
 
         self.proc = Popen(commands, stdout=PIPE, stderr=STDOUT, universal_newlines=True)
+        
+        # set stdout to non-blocking
+        fd = self.proc.stdout.fileno()
+        fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+        fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
 
         while True:
-            self.output += self.proc.stdout.read()
+            try:
+                self.output += self.proc.stdout.read()
+            except IOError as e:
+                if e.errno != 11:
+                    raise
+                time.sleep(1)
             if 'ip-up finished' in self.output:
                 return
             elif self.proc.poll():
@@ -75,6 +88,11 @@ class PPPConnection:
     @property
     def laddr(self):
         if not self._laddr:
+            try:
+                self.output += self.proc.stdout.read()
+            except IOError as e:
+                if e.errno != 11:
+                    raise
             result = re.search(r'local  IP address ([\d\.]+)', self.output)
             if result:
                 self._laddr = result.group(1)
@@ -84,6 +102,11 @@ class PPPConnection:
     @property
     def raddr(self):
         if not self._raddr:
+            try:
+                self.output += self.proc.stdout.read()
+            except IOError as e:
+                if e.errno != 11:
+                    raise
             result = re.search(r'remote IP address ([\d\.]+)', self.output)
             if result:
                 self._raddr = result.group(1)
@@ -92,11 +115,15 @@ class PPPConnection:
 
     def connected(self):
         if self.proc.poll():
-            self.output += self.proc.stdout.read()
+            try:
+                self.output += self.proc.stdout.read()
+            except IOError as e:
+                if e.errno != 11:
+                    raise
             if self.proc.returncode not in [0, 5]:
                 raise PPPConnectionError(proc.returncode, self.output)
             return False
-        elif 'ip-up finished' in self.output.getvalue():
+        elif 'ip-up finished' in self.output:
             return True
 
         return False

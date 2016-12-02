@@ -1,11 +1,12 @@
 import fcntl
 import os
+import signal
 import re
 import time
 
 from subprocess import Popen, PIPE, STDOUT
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 PPPD_RETURNCODES = {
     1:  'Fatal error occured',

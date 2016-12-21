@@ -6,7 +6,7 @@ import time
 
 from subprocess import Popen, PIPE, STDOUT
 
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 PPPD_RETURNCODES = {
     1:  'Fatal error occured',
@@ -61,10 +61,10 @@ class PPPConnection:
 
         commands.append(pppd_path)
 
-        commands.extend(args)
         for k,v in kwargs.items():
             commands.append(k)
             commands.append(v)
+        commands.extend(args)
         commands.append('nodetach')
 
         self.proc = Popen(commands, stdout=PIPE, stderr=STDOUT, universal_newlines=True)

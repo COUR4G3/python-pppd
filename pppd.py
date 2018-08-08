@@ -67,7 +67,11 @@ class PPPConnection:
         commands.extend(args)
         commands.append('nodetach')
 
-        self.proc = Popen(commands, stdout=PIPE, stderr=STDOUT, universal_newlines=True)
+        self.proc = Popen(commands, 
+            stdout=PIPE, 
+            stderr=STDOUT, 
+            universal_newlines=True, 
+            preexec_fn=os.setsid)
         
         # set stdout to non-blocking
         fd = self.proc.stdout.fileno()
@@ -136,5 +140,9 @@ class PPPConnection:
         except PPPConnectionError:
             return
 
-        self.proc.send_signal(signal.SIGHUP)
-        self.proc.wait()
+        # Send the signal to all the processes in group
+        # Based on stackoverlfow: 
+        # https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true/
+        os.killpg(os.getpgid(self.proc.pid), signal.SIGHUP)
+        os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
+        

@@ -6,7 +6,7 @@ import time
 
 from subprocess import Popen, PIPE, STDOUT
 
-__version__ = '1.0.3'
+__version__ = '1.0.4'
 
 PPPD_RETURNCODES = {
     1:  'Fatal error occured',
@@ -43,7 +43,7 @@ class PPPConnectionError(Exception):
 
 class PPPConnection:
     def __init__(self, *args, **kwargs):
-        self.output = ''
+        self.output = b''
         self._laddr = None
         self._raddr = None
 
@@ -70,7 +70,6 @@ class PPPConnection:
         self.proc = Popen(commands, 
             stdout=PIPE, 
             stderr=STDOUT, 
-            universal_newlines=True, 
             preexec_fn=os.setsid)
         
         # set stdout to non-blocking
@@ -85,7 +84,7 @@ class PPPConnection:
                 if e.errno != 11:
                     raise
                 time.sleep(1)
-            if 'ip-up finished' in self.output:
+            if b'ip-up finished' in self.output:
                 return
             elif self.proc.poll():
                 raise PPPConnectionError(self.proc.returncode, self.output)
@@ -98,7 +97,7 @@ class PPPConnection:
             except IOError as e:
                 if e.errno != 11:
                     raise
-            result = re.search(r'local  IP address ([\d\.]+)', self.output)
+            result = re.search(b'local  IP address ([\d\.]+)', self.output)
             if result:
                 self._laddr = result.group(1)
 
@@ -112,7 +111,7 @@ class PPPConnection:
             except IOError as e:
                 if e.errno != 11:
                     raise
-            result = re.search(r'remote IP address ([\d\.]+)', self.output)
+            result = re.search(b'remote IP address ([\d\.]+)', self.output)
             if result:
                 self._raddr = result.group(1)
 
@@ -128,7 +127,7 @@ class PPPConnection:
             if self.proc.returncode not in [0, 5]:
                 raise PPPConnectionError(proc.returncode, self.output)
             return False
-        elif 'ip-up finished' in self.output:
+        elif b'ip-up finished' in self.output:
             return True
 
         return False

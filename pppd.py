@@ -6,7 +6,7 @@ import time
 
 from subprocess import Popen, PIPE, STDOUT
 
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 
 PPPD_RETURNCODES = {
     1:  'Fatal error occured',
@@ -79,7 +79,9 @@ class PPPConnection:
 
         while True:
             try:
-                self.output += self.proc.stdout.read()
+                data = self.proc.stdout.read()
+                if data:
+                    self.output += data
             except IOError as e:
                 if e.errno != 11:
                     raise
@@ -93,7 +95,9 @@ class PPPConnection:
     def laddr(self):
         if not self._laddr:
             try:
-                self.output += self.proc.stdout.read()
+                data = self.proc.stdout.read()
+                if data:
+                    self.output += data
             except IOError as e:
                 if e.errno != 11:
                     raise
@@ -107,7 +111,9 @@ class PPPConnection:
     def raddr(self):
         if not self._raddr:
             try:
-                self.output += self.proc.stdout.read()
+                data = self.proc.stdout.read()
+                if data:
+                    self.output += data
             except IOError as e:
                 if e.errno != 11:
                     raise
@@ -120,7 +126,9 @@ class PPPConnection:
     def connected(self):
         if self.proc.poll():
             try:
-                self.output += self.proc.stdout.read()
+                data = self.proc.stdout.read()
+                if data:
+                    self.output += data
             except IOError as e:
                 if e.errno != 11:
                     raise
@@ -144,4 +152,4 @@ class PPPConnection:
         # https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true/
         os.killpg(os.getpgid(self.proc.pid), signal.SIGHUP)
         os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
-        
+

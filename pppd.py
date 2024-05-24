@@ -133,7 +133,7 @@ class PPPConnection:
                 if e.errno != 11:
                     raise
             if self.proc.returncode not in [0, 5]:
-                raise PPPConnectionError(proc.returncode, self.output)
+                raise PPPConnectionError(self.proc.returncode, self.output)
             return False
         elif b'ip-up finished' in self.output:
             return True

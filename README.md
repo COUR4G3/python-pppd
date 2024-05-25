@@ -10,68 +10,77 @@ connections.
 
 Make sure `pppd` is installed on your system, typically on Ubuntu/Debian:
 
-   $ apt-get install pppd
+```shell
+$ apt-get install pppd
+```
 
 
 And on Fedora/CentOS/RedHat:
 
-   $ dnf install pppd
+```shell
+$ dnf install pppd
+```
 
 
 Then you can install the latest release from PyPi:
 
-   $ pip install python-pppd
+```shell
+$ pip install python-pppd
+```
 
 
 Alternatively, clone and install the latest development version from GitHub:
 
-   $ git clone https://github.com/cour4g3/python-pppd
-   $ cd python-pppd
-   $ pip install -e .
+```shell
+$ git clone https://github.com/cour4g3/python-pppd
+$ cd python-pppd
+$ pip install -e .
+```
 
 
 ## Getting Started
 
 You can connect to an existing configured PPP connection:
 
-.. code:: python
-
-   >>> from pppd import PPPConnection
-   >>> ppp = PPPConnection(call='work') # blocks until connected
-   >>> ppp.connected() # check if connected, raises error if connection error
-   True
-   >>> ppp.laddr # address of local host
-   '10.0.0.1'
-   >>> ppp.raddr # address of remote client
-   '10.0.0.2'
+```python
+>>> from pppd import PPPConnection
+>>> ppp = PPPConnection(call='work') # blocks until connected
+>>> ppp.connected() # check if connected, raises error if connection error
+True
+>>> ppp.laddr # address of local host
+'10.0.0.1'
+>>> ppp.raddr # address of remote client
+'10.0.0.2'
+```
 
 
 You can specify any positional or keyword arguments:
 
-.. code:: python
-
-   PPPConnection('/dev/ttyS0', connect='/usr/bin/chat -v -f /etc/chatscripts/A1')
-
+```python
+>>> PPPConnection('/dev/ttyS0', connect='/usr/bin/chat -v -f /etc/chatscripts/A1')
+```
 
 Which is equivalent to the following:
 
-   $ sudo pppd /dev/ttyS0 connect "/usr/bin/chat -v -f /etc/chatscripts/A1"
+```shell
+$ sudo pppd /dev/ttyS0 connect "/usr/bin/chat -v -f /etc/chatscripts/A1"
+```
 
 
 Normally you require `sudo` to use `pppd`, if you don't have it and have setup
 the `pppd` binary with setuid-root or are running as root you can use:
 
-.. code:: python
-
-   PPPConnection(sudo=False)
+```python
+>>> PPPConnection(sudo=False)
+```
 
 
 You can also specify an alternate paths to `pppd` or `sudo` if the libary cannot
 find them:
 
-.. code:: python
-
-   PPPConnection(sudo_path='/usr/local/bin/sudo', pppd_path='/usr/local/sbin/pppd')
+```python
+>>> PPPConnection(sudo_path='/usr/local/bin/sudo', pppd_path='/usr/local/sbin/pppd')
+```
 
 
 License

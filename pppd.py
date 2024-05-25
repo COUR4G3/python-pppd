@@ -101,7 +101,7 @@ class PPPConnection:
             except IOError as e:
                 if e.errno != 11:
                     raise
-            result = re.search(b'local  IP address ([\d\.]+)', self.output)
+            result = re.search(rb'local  IP address ([\d\.]+)', self.output)
             if result:
                 self._laddr = result.group(1)
 
@@ -117,7 +117,7 @@ class PPPConnection:
             except IOError as e:
                 if e.errno != 11:
                     raise
-            result = re.search(b'remote IP address ([\d\.]+)', self.output)
+            result = re.search(rb'remote IP address ([\d\.]+)', self.output)
             if result:
                 self._raddr = result.group(1)
 

@@ -75,6 +75,7 @@ class PPPConnection:
             commands.append(v)
         commands.extend(args)
         commands.append('nodetach')
+        commands.append('debug')
 
         self.proc = Popen(commands, 
             stdout=PIPE, 

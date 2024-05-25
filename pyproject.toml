@@ -1,0 +1,40 @@
+[project]
+name = "python-pppd"
+description = "Simple library for controlling PPP connections with pppd."
+readme = "README.rst"
+license = { text = "MIT" }
+authors = [{name = "Michael de Villiers", email = "michael@devilears.co.za"},]
+maintainers = [{name = "Michael de Villiers", email = "michael@devilears.co.za"},]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3",
+    "Topic :: System :: Networking",
+]
+dynamic = ["version"]
+requires-python = ">= 3.6"
+
+[project.urls]
+Homepage = "https://github.com/COUR4G3/python-pppd/"
+"Source Code" = "https://github.com/COUR4G3/python-pppd/"
+"Issue Tracker" = "https://github.com/COUR4G3/python-pppd/issues/"
+
+[build-system]
+requires = [
+    "setuptools>=64.0",
+    "setuptools_scm[toml]>=6.2",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.bandit]
+exclude_dirs = [".github"]
+skips = ["B101"]
+
+[tool.setuptools]
+py-modules = ["pppd"]
+
+[tool.setuptools_scm]
+write_to = "_version.py"
